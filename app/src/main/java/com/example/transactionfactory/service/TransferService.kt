@@ -1,14 +1,17 @@
 package com.example.transactionfactory.service
 
-class TransferService(val storage : Storage) {
+class TransferService(val storage: Storage) {
 
     fun transfer(opOrigin: Operation, opDestiny: Operation): TransferResponse {
-        val client = ApiClient()
-        val originResponse: Boolean = client.verifyAccount(opOrigin)
-        val destinyResponse: Boolean = client.verifyAccount(opDestiny)
+        val clientOrigin: Client = SantanderClient()
+        val clientDestiny: Client = BCIClient()
+
+        val originResponse = clientOrigin.verifyAccount(opOrigin)
+        val destinyResponse = clientDestiny.verifyAccount(opDestiny)
+
         if (originResponse && destinyResponse) {
             val clientRequest = ApiClientRequest(opOrigin, opDestiny)
-            val responseApi: ApiClientResponse = client.send(clientRequest)
+            val responseApi = clientOrigin.send(clientRequest)
             storage.save(responseApi.message())
             return TransferResponse(responseApi.code(), responseApi.message())
         }
