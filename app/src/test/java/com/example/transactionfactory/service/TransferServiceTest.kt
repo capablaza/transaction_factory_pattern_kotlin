@@ -9,19 +9,19 @@ class TransferServiceTest {
     fun shouldReturn200WhenOriginAndDestinyAreCorrects() {
         val storage: Storage = StorageDummy()
         val service = TransferService(storage)
-        val opOrigin = Operation(10092, "santander", 50400)
-        val opDestiny = Operation(98128, "bci", 90500)
+        val opOrigin = Operation(10092, Bank.SANTANDER.name, 50400)
+        val opDestiny = Operation(98128, Bank.BCI.name, 90500)
         val response = service.transfer(opOrigin, opDestiny)
-        Assert.assertEquals(200, response!!.code())
+        Assert.assertEquals(200, response.code().toLong())
     }
 
     @Test
-    fun shouldReturn501WhenOriginOrDestinyIsNotCorrect() {
+    fun shouldReturn509WhenBankOriginIsNotFound() {
         val storage: Storage = StorageDummy()
         val service = TransferService(storage)
         val opOrigin = Operation(10092, "bbva", 50400)
-        val opDestiny = Operation(98128, "santader", 90500)
+        val opDestiny = Operation(98128, Bank.SANTANDER.name, 90500)
         val response = service.transfer(opOrigin, opDestiny)
-        Assert.assertEquals(501, response!!.code())
+        Assert.assertEquals(509, response.code().toLong())
     }
 }
